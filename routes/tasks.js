@@ -1,9 +1,18 @@
 const express = require("express");
-const { emailReminder, rescheduleJob } = require("../startup/emailReminder");
+const {
+  emailReminder,
+  rescheduleJob,
+  deleteJob,
+} = require("../startup/emailReminder");
 const auth = require("../middleware/auth");
 const { Task, validate } = require("../models/Task");
 const humanInterval = require("human-interval");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
+
+// TODO: Add Atomicity. Use MongoDB Transactions
+// Both tasks and agenda must be created deleted or updated together.
+// If one fails, the other also should rollback.
 
 // GET: Get the list of tasks for a user
 router.get("/", auth, async (req, res) => {
@@ -55,6 +64,9 @@ router.post("/", auth, async (req, res) => {
 
 // By default this updates the duration based on the startTime
 router.put("/:id", auth, async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).send({ message: "Invalid Task ID format..." });
+  }
   // Request Body Validation
   const { error } = validate(req.body);
   if (error) return res.status(400).send({ message: error.details[0].message });
@@ -99,6 +111,61 @@ router.put("/:id", auth, async (req, res) => {
 
   // Save Task
   await task.save();
+  return res.send({ data: task });
+});
+
+router.put("/reset/:id", auth, async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).send({ message: "Invalid Task ID format..." });
+  }
+  // Check if tasks exists
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    return res.status(404).send({ message: "Requested Task Not Found..." });
+  }
+
+  // Gather required Data for Agenda and Task Creation
+  const duration = humanInterval(task.interval);
+  if (duration === undefined) {
+    return res.status(400).send({ message: "Invalid interval provided." });
+  }
+
+  const email = req.user.email;
+  const userId = req.user._id;
+  const currentTime = new Date();
+  // Update based on current Time
+  const endTime = new Date(currentTime.getTime() + duration);
+
+  const taskId = task._id.toString();
+
+  // Update Task
+  task.startTime = currentTime;
+  task.endTime = endTime;
+
+  // Reschedule Task Agenda
+  await rescheduleJob(taskId, task.taskData, email, userId, endTime);
+
+  // Save Task
+  await task.save();
+  return res.send({ data: task });
+});
+
+// DELETE: Delete the task and the agenda for a particular taskID
+router.delete("/:id", auth, async (req, res) => {
+  // Verify ID params
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).send({ message: "Invalid Task ID format..." });
+  }
+
+  // Find Task with given ID
+  const task = await Task.findById(req.params.id);
+
+  if (!task)
+    return res.status(404).send({ message: "Requested Task Not found..." });
+
+  await Task.deleteOne({ _id: task._id });
+  await deleteJob(req.params.id);
+
   return res.send({ data: task });
 });
 
