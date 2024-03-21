@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "agenda": "^5.0.0",
+    "config": "^3.3.11",
     "express": "^4.19.1",
     "joi": "^17.12.2",
     "mongoose": "^8.2.2",

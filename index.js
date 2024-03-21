@@ -1,4 +1,5 @@
 const express = require("express");
+const config = require("config");
 const app = express();
 const {
   startEmailService,
@@ -7,6 +8,9 @@ const {
 
 // API Endpoints
 require("./startup/routes")(app);
+
+const ES = config.get("EMAIL");
+console.log(ES.KEY);
 
 // Connect to MongoDB
 require("./startup/db")();

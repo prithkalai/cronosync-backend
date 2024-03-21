@@ -1,6 +1,7 @@
 const { Agenda } = require("agenda");
 const nodemailer = require("nodemailer");
 const logger = require("./logger");
+const config = require("config");
 
 // TODO: Setup emailReminder config variables
 
@@ -8,14 +9,17 @@ const emailReminder = new Agenda({
   db: { address: "mongodb://localhost:27017/cronosync" },
 });
 
+const ES = config.get("EMAIL");
+console.log(ES.USER);
+
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  host: "smtp.gmail.com",
+  service: ES.SERVICE,
+  host: ES.HOST,
   port: 465,
   secure: true,
   auth: {
-    user: "prithkalai@gmail.com",
-    pass: "dzro oudw wybp vwio",
+    user: ES.USER,
+    pass: ES.KEY,
   },
 });
 
@@ -24,7 +28,7 @@ emailReminder.define("send email reminder", async (job) => {
 
   // Include User name, Task Data, User Email
   const mailOptions = {
-    from: "prithkalai@gmail.com",
+    from: ES.USER,
     to: email,
     subject: "Task Reminder From Cronosync",
     text: "Please complete the following task. 'Clean MacBook'",
@@ -32,16 +36,15 @@ emailReminder.define("send email reminder", async (job) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error("Error sending email: ", error);
+      logger.error("Error sending email");
     } else {
-      console.log("Email sent: ", info.response);
+      logger.info("Email sent");
     }
   });
 });
 
 async function startEmailService() {
   await emailReminder.start();
-  throw new Error("FATAL ERROR");
   logger.info("Email Reminder Service Started!");
 }
 
