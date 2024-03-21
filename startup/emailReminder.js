@@ -3,14 +3,11 @@ const nodemailer = require("nodemailer");
 const logger = require("./logger");
 const config = require("config");
 
-// TODO: Setup emailReminder config variables
-
 const emailReminder = new Agenda({
   db: { address: "mongodb://localhost:27017/cronosync" },
 });
 
 const ES = config.get("EMAIL");
-console.log(ES.USER);
 
 const transporter = nodemailer.createTransport({
   service: ES.SERVICE,

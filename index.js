@@ -9,9 +9,6 @@ const {
 // API Endpoints
 require("./startup/routes")(app);
 
-const ES = config.get("EMAIL");
-console.log(ES.KEY);
-
 // Connect to MongoDB
 require("./startup/db")();
 

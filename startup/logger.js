@@ -1,5 +1,14 @@
 const winston = require("winston");
-// require("express-async-errors"); // Removes Try-Catch Blocks in Express Endpoints
+const config = require("config");
+require("express-async-errors"); // Removes Try-Catch Blocks in Express Endpoints
+
+if (!config.get("PRIVATE_KEY")) {
+  throw new Error("FATAL ERROR: Server PRIVATE_KEY not defined");
+}
+
+if (!config.get("EMAIL")) {
+  throw new Error("FATAL ERROR: Email Service credentials not defined");
+}
 
 const logger = winston.createLogger({
   transports: [
