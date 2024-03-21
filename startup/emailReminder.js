@@ -2,6 +2,7 @@ const { Agenda } = require("agenda");
 const nodemailer = require("nodemailer");
 const logger = require("./logger");
 const config = require("config");
+const { agendaJobModel } = require("../models/Agenda");
 
 const emailReminder = new Agenda({
   db: { address: "mongodb://localhost:27017/cronosync" },
@@ -21,14 +22,14 @@ const transporter = nodemailer.createTransport({
 });
 
 emailReminder.define("send email reminder", async (job) => {
-  const { email } = job.attrs.data;
+  const { email, taskData } = job.attrs.data;
 
   // Include User name, Task Data, User Email
   const mailOptions = {
     from: ES.USER,
     to: email,
     subject: "Task Reminder From Cronosync",
-    text: "Please complete the following task. 'Clean MacBook'",
+    text: `Please complete the following task. '${taskData}'`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -62,6 +63,30 @@ async function loadPendingEmailJobs() {
   });
 }
 
+async function rescheduleJob(taskId, taskData, email, userId, newEndTime) {
+  const job = await agendaJobModel.findOne({
+    "data.taskId": taskId,
+  });
+  if (!job) {
+    throw new Error("Requested Job Not Found...");
+  }
+
+  // Convert newEndTime to a Date object if it's not already one
+  const newRunAtTime = new Date(newEndTime);
+
+  await emailReminder.cancel({ _id: job._id }); // Cancel the existing job
+
+  // Reschedule the job with the new end time
+  await emailReminder.schedule(newRunAtTime, "send email reminder", {
+    email,
+    userId,
+    taskId,
+    taskData,
+  });
+  console.log(`Rescheduled job ${taskId} to run at ${newRunAtTime}`);
+}
+
 module.exports.emailReminder = emailReminder;
 module.exports.startEmailService = startEmailService;
 module.exports.loadPendingEmailJobs = loadPendingEmailJobs;
+module.exports.rescheduleJob = rescheduleJob;
