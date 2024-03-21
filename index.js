@@ -1,5 +1,5 @@
 const express = require("express");
-const config = require("config");
+const morgan = require("morgan");
 const app = express();
 const {
   startEmailService,

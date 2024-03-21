@@ -19,7 +19,8 @@ userSchema.methods.getAuthToken = function () {
       isAdmin: this.isAdmin,
       _id: this._id,
     },
-    config.get("PRIVATE_KEY")
+    config.get("PRIVATE_KEY"),
+    { expiresIn: "24h" }
   );
   return token;
 };
@@ -36,5 +37,14 @@ const validateUser = (body) => {
   return schema.validate(body);
 };
 
+const validateLogin = (body) => {
+  const schema = joi.object({
+    email: joi.string().email().required(),
+    password: joi.string().required().min(4),
+  });
+  return schema.validate(body);
+};
+
 module.exports.User = User;
-module.exports.validate = validateUser;
+module.exports.validateRegister = validateUser;
+module.exports.validateLogin = validateLogin;
