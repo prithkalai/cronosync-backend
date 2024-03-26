@@ -7,6 +7,10 @@ const taskSchema = new mongoose.Schema({
   interval: { type: String, required: true },
   startTime: { type: Date, default: new Date() },
   endTime: { type: Date, required: true },
+  category: {
+    type: String,
+    default: "None",
+  },
 });
 
 const Task = mongoose.model("tasks", taskSchema);

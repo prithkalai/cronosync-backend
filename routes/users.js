@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
   if (error) return res.status(400).send({ message: error.details[0].message });
   // Check if user is already present
   let user = await User.findOne({ email: req.body.email });
-  if (!user) {
+  if (user) {
     return res.status(400).send({ message: "User already registered." });
   }
 
