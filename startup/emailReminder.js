@@ -140,7 +140,7 @@ async function rescheduleJob(taskId, taskData, email, userId, newEndTime) {
     taskId,
     taskData,
   });
-  console.log(`Rescheduled job ${taskId} to run at ${newRunAtTime}`);
+  logger.info(`Rescheduled job ${taskId} to run at ${newRunAtTime}`);
 }
 
 async function deleteJob(taskId) {
@@ -150,7 +150,7 @@ async function deleteJob(taskId) {
   }
   await emailReminder.cancel({ _id: job._id });
   await agendaJobModel.deleteOne({ _id: job._id });
-  console.log(`Delete Job ${job._id}`);
+  logger.info(`Deleted Job ${job._id}`);
 }
 
 module.exports.emailReminder = emailReminder;

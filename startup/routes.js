@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const error = require("../middleware/error");
 const users = require("../routes/users");
 const tasks = require("../routes/tasks");
@@ -7,6 +8,7 @@ const login = require("../routes/login");
 
 module.exports = function (app) {
   // Built-in Middleware
+  app.use(cors());
   app.use(express.json());
   app.use(morgan("tiny"));
   // CORS

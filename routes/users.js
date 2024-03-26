@@ -29,7 +29,6 @@ router.post("/", async (req, res) => {
   // Create salted hash of password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
   user.password = hashedPassword;
 
   // Create a JSON web token

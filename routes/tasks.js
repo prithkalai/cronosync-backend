@@ -126,10 +126,6 @@ router.put("/reset/:id", auth, async (req, res) => {
 
   // Gather required Data for Agenda and Task Creation
   const duration = humanInterval(task.interval);
-  if (duration === undefined) {
-    return res.status(400).send({ message: "Invalid interval provided." });
-  }
-
   const email = req.user.email;
   const userId = req.user._id;
   const currentTime = new Date();
