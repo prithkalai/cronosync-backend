@@ -3,6 +3,7 @@ const { User, validateRegister } = require("../models/User");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
+const { Category } = require("../models/Category");
 const router = express.Router();
 
 // GET Logged in User Details
@@ -34,6 +35,12 @@ router.post("/", async (req, res) => {
   // Create a JSON web token
   const token = user.getAuthToken();
 
+  const category = new Category({
+    title: "Uncategorized",
+    userId: user._id,
+  });
+
+  await category.save();
   // Save User object to the DB
   await user.save();
   return res.send({

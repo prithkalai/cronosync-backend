@@ -43,6 +43,7 @@ router.post("/", auth, async (req, res) => {
     interval: req.body.interval,
     startTime: currentTime,
     endTime: endTime,
+    category: req.body.category,
   });
 
   const taskId = task._id.toString();

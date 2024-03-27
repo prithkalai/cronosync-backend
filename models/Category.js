@@ -17,5 +17,13 @@ const validateCategory = (body) => {
   return schema.validate(body);
 };
 
+const validateDeleteCategory = (body) => {
+  const schema = joi.object({
+    uncategorizedId: joi.string().required(),
+  });
+  return schema.validate(body);
+};
+
 module.exports.Category = Category;
 module.exports.validate = validateCategory;
+module.exports.validateDeleteCategory = validateDeleteCategory;

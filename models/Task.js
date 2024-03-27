@@ -8,8 +8,17 @@ const taskSchema = new mongoose.Schema({
   startTime: { type: Date, default: new Date() },
   endTime: { type: Date, required: true },
   category: {
-    type: String,
-    default: "None",
+    type: {
+      _id: {
+        type: String,
+        required: true,
+      },
+      title: {
+        type: String,
+        required: true,
+      },
+    },
+    required: true,
   },
 });
 
@@ -20,6 +29,10 @@ const validateTasks = (body) => {
   const schema = joi.object({
     taskData: joi.string().required(),
     interval: joi.string().required(),
+    category: joi.object({
+      title: joi.string().required().min(4),
+      _id: joi.string().required(),
+    }),
   });
 
   return schema.validate(body);
