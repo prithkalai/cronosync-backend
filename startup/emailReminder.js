@@ -4,8 +4,13 @@ const logger = require("./logger");
 const config = require("config");
 const { agendaJobModel } = require("../models/Agenda");
 
+const DB_USER = config.get("DB_USER");
+const DB_AUTH = config.get("DB_AUTH");
+
 const emailReminder = new Agenda({
-  db: { address: "mongodb://localhost/cronosync" },
+  db: {
+    address: `mongodb+srv://${DB_USER}:${DB_AUTH}@cronosync-cluster.fmbrfyn.mongodb.net/cronosync?retryWrites=true&w=majority&appName=CronoSync-Cluster`,
+  },
 });
 
 const ES = config.get("EMAIL");
