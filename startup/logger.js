@@ -10,6 +10,14 @@ if (!config.get("EMAIL")) {
   throw new Error("FATAL ERROR: Email Service credentials not defined");
 }
 
+if (!config.get("DB_AUTH")) {
+  throw new Error("FATAL ERROR: DB_AUTH not defined");
+}
+
+if (!config.get("DB_USER")) {
+  throw new Error("FATAL ERROR: DB_USER not defined");
+}
+
 const logger = winston.createLogger({
   transports: [
     new winston.transports.Console({
