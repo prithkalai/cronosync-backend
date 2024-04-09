@@ -27,7 +27,6 @@ const transporter = nodemailer.createTransport({
 });
 
 emailReminder.define("send email reminder", async (job) => {
-  console.log("Sending Email");
   const { email, taskData } = job.attrs.data;
 
   // Include User name, Task Data, User Email
@@ -87,7 +86,7 @@ emailReminder.define("send email reminder", async (job) => {
             <p>Happy Scheduling!!</p>
         </div>
         <div class="footer">
-            © [2024] CronoSync | <a href="https://yourwebsite.com">Website</a>
+            © [2024] CronoSync | <a href="https://cronosync.vercel.app">Website</a>
         </div>
     </div>
 </body>
@@ -99,7 +98,7 @@ emailReminder.define("send email reminder", async (job) => {
     if (error) {
       logger.error("Error sending email");
     } else {
-      logger.info("Email sent");
+      logger.info("Email sent", error);
     }
   });
 });
