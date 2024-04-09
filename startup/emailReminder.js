@@ -27,6 +27,7 @@ const transporter = nodemailer.createTransport({
 });
 
 emailReminder.define("send email reminder", async (job) => {
+  console.log("Sending Email");
   const { email, taskData } = job.attrs.data;
 
   // Include User name, Task Data, User Email
