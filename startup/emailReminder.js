@@ -99,6 +99,7 @@ emailReminder.define("send email reminder", async (job) => {
       logger.error("Error sending email");
     } else {
       logger.info("Email sent", error);
+      console.log(error);
     }
   });
 });
