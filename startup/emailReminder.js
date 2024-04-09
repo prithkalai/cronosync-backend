@@ -97,9 +97,9 @@ emailReminder.define("send email reminder", async (job) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       logger.error("Error sending email");
-    } else {
-      logger.info("Email sent", error);
       console.log(error);
+    } else {
+      logger.info("Email sent");
     }
   });
 });
