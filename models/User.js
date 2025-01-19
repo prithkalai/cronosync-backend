@@ -19,8 +19,7 @@ userSchema.methods.getAuthToken = function () {
       isAdmin: this.isAdmin,
       _id: this._id,
     },
-    config.get("PRIVATE_KEY"),
-    { expiresIn: "24h" }
+    config.get("PRIVATE_KEY")
   );
   return token;
 };
